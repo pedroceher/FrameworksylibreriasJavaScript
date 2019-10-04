@@ -1,22 +1,23 @@
 $(document).ready(function(){
 blanco();
-iniciartablero();
 
+//cambio de color en Main Titulo
 function blanco(){
   $("div h1").animate(
     {
       color:"white"
-    },3000, function(){amarillo()}
-  );
+    },900, function(){amarillo()}
+  ).delay(1000);
 }
 function amarillo(){
   $("div h1").animate(
     {
       color:"#DCFF0E"
-    },2000, function(){blanco()}
+    },1200, function(){blanco()}
   );
 }
 
+//Inicializar el tablero
 function iniciartablero(){
   var columnas = $('[class^="col-"]');
   columnas.each(function(){
@@ -24,13 +25,33 @@ function iniciartablero(){
       var aleatorio = Math.floor((Math.random()*4)+1);
       var hijoscolumna= $(this).children().length;
       if (hijoscolumna>0){
-        $(this).find('img:first-of-type').before('<img src="image/' + aleatorio + '.png" class="element"></img>');
+        $(this).find('img:first-of-type').before('<img src="image/' + aleatorio + '.png" class="pieza"></img>');
       } else {
-        $(this).append('<img src="image/' + aleatorio + '.png" class="element"></img>')
+        $(this).append('<img src="image/' + aleatorio + '.png" class="pieza"></img>')
       }
     }
   })
+  $('.pieza').draggable();
+}
 
+//Boton iniciar
+$('.btn-reinicio').click(function(){
+  var texto_btn = $(this).text();
+  if (texto_btn == "Iniciar"){
+    $(this).text("Reiniciar");
+    iniciartablero();
+  }else {
+    $(this).text("Iniciar");
+    reiniciar();
+  }
+})
+
+//funcion Reiniciar
+function reiniciar(){
+  var columnas = $('[class^="col-"]');
+  columnas.each(function(){
+    $(this).empty();
+  })
 }
 
 });
