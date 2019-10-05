@@ -31,14 +31,14 @@ body{
   border: 10px solid #E87306;
   background: rgba(232, 115, 6, 0.5);
   border-radius: 5px;
-  height: 740px;
+  height: 860px;
   display: flex;
   flex-flow: row wrap;
 }
 
 .panel-score{
   width: 25%;
-  height: 740px;
+  height: 860px;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;

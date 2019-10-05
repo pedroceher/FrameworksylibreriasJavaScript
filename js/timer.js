@@ -1,56 +1,33 @@
-var centesimas = 0;
-var segundos = 0;
-var minutos = 0;
-var horas = 0;
-var control;
-function inicio () {
-	control = setInterval(cronometro,10);
+function contador(){
+	// Set the time we're counting down to
+	//var countDownDate = new Date().getTime() + minutes * 60000);
+	var countDownTime = new Date().getTime()+2*60000;
 
-}
-function parar () {
-	clearInterval(control);
+	// Update the count down every 1 second
+	var x = setInterval(function() {
 
-}
-function reinicio () {
-	clearInterval(control);
-	centesimas = 0;
-	segundos = 0;
-	minutos = 0;
-	horas = 0;
-	Centesimas.innerHTML = ":00";
-	Segundos.innerHTML = ":00";
-	Minutos.innerHTML = ":00";
-	Horas.innerHTML = "00";
+	  // Get today's time
+	  var now = new Date().getTime();
 
-}
-function cronometro () {
-	if (centesimas < 99) {
-		centesimas++;
-		if (centesimas < 10) { centesimas = "0"+centesimas }
-		Centesimas.innerHTML = ":"+centesimas;
-	}
-	if (centesimas == 99) {
-		centesimas = -1;
-	}
-	if (centesimas == 0) {
-		segundos ++;
-		if (segundos < 10) { segundos = "0"+segundos }
-		Segundos.innerHTML = ":"+segundos;
-	}
-	if (segundos == 59) {
-		segundos = -1;
-	}
-	if ( (centesimas == 0)&&(segundos == 0) ) {
-		minutos++;
-		if (minutos < 10) { minutos = "0"+minutos }
-		Minutos.innerHTML = ":"+minutos;
-	}
-	if (minutos == 59) {
-		minutos = -1;
-	}
-	if ( (centesimas == 0)&&(segundos == 0)&&(minutos == 0) ) {
-		horas ++;
-		if (horas < 10) { horas = "0"+horas }
-		Horas.innerHTML = horas;
-	}
+	  // Find the distance between now and the count down date
+	  var distance = countDownTime - now;
+
+	  // Time calculations for days, hours, minutes and seconds
+	  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+	  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+	  // Output the result in an element with id="timer"
+		if (seconds<10){
+			$("#timer").text("0"+minutes + ":0" + seconds);
+		}else {
+			$("#timer").text("0"+minutes + ":" + seconds);
+		}
+
+
+	  // If the count down is over, write some text
+	  if (distance < 0) {
+	    clearInterval(x);
+	    $("#timer").text("00:00");
+	  }
+	}, 1000);
 }

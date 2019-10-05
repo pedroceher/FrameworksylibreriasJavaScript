@@ -21,7 +21,7 @@ function amarillo(){
 function iniciartablero(){
   var columnas = $('[class^="col-"]');
   columnas.each(function(){
-    for (var i=0; i<6; i++){
+    for (var i=0; i<7; i++){
       var aleatorio = Math.floor((Math.random()*4)+1);
       var hijoscolumna= $(this).children().length;
       if (hijoscolumna>0){
@@ -40,6 +40,7 @@ $('.btn-reinicio').click(function(){
   if (texto_btn == "Iniciar"){
     $(this).text("Reiniciar");
     iniciartablero();
+    contador();
   }else {
     $(this).text("Iniciar");
     reiniciar();
