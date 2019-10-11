@@ -17,11 +17,13 @@ function amarillo(){
 //Inicializar el tablero
 function iniciartablero(){
   var columnas = $('[class^="col-"]');
+  var maximoElementos = 7;
   columnas.each(function(){
-    for (var i=0; i<7; i++){
+    var numChildren = $(this).children().length;
+    var faltan = maximoElementos-numChildren;
+    for (var i=0; i<faltan; i++){
       var aleatorio = Math.floor((Math.random()*4)+1);
-      var hijoscolumna= $(this).children().length;
-      if (hijoscolumna>0){
+      if (numChildren>0){
         $(this).find('img:first-of-type').before('<img src="image/' + aleatorio + '.png" class="elemento"></img>');
       } else {
         $(this).append('<img src="image/' + aleatorio + '.png" class="elemento"></img>')
@@ -29,6 +31,7 @@ function iniciartablero(){
     }
   })
   dragdropElementos();
+  verificar();
 }
 
 //Eventos para hacer draggable y droppable los elementos img
@@ -38,7 +41,7 @@ function dragdropElementos(){
     grid: [115, 95],
     droppable: 'img',
 		revert: true,
-		revertDuration: 400,
+		revertDuration: 100,
 		opacity: 0.8,
 		zIndex: 1,
 	});
@@ -53,23 +56,166 @@ function intercambiar(event, arrastrado){
   var rutaArrastrado = arrastrado.attr('src');
   var seleccionado = $(this);
   var rutaSeleccionado = seleccionado.attr('src');
+  mostrarMovimientos();
   arrastrado.attr('src', rutaSeleccionado);
   $(this).attr('src',rutaArrastrado);
+  verificar();
+}
+
+//Mostrar movimientos
+function mostrarMovimientos(){
+  var numMovimientos = Number($('#movimientos-text').text());
+  numMovimientos += 1;
+  $('#movimientos-text').text(numMovimientos);
 }
 
 //verificar si hay minimo tres dulces del mismo tipo
 function verificar(){
+  var col1Elementos = $('.col-1').children();
+	var col2Elementos = $('.col-2').children();
+	var col3Elementos = $('.col-3').children();
+	var col4Elementos = $('.col-4').children();
+	var col5Elementos = $('.col-5').children();
+	var col6Elementos = $('.col-6').children();
+	var col7Elementos = $('.col-7').children();
+  var arregloColumnas = $([col1Elementos, col2Elementos, col3Elementos, col4Elementos,
+    col5Elementos, col6Elementos, col7Elementos
+  ]);
 
+  //buscar combos en columnas
+    for (var c=0; c<7; c++){
+      var curElemento = null;
+      var sigElemento = null;
+      var inicioCombiacion = null;
+      var finCombinacion= null;
+      var numIguales= 0;
+      for (var r=0; r<6; r++){
+        curElemento = arregloColumnas[c][r].src;
+        sigElemento = arregloColumnas[c][r+1].src;
+        if (curElemento==sigElemento){
+          if (inicioCombiacion==null){
+            inicioCombiacion=r;
+            numIguales += 1;
+          }else {
+            numIguales += 1;
+          }
+          if (r>4 && numIguales>1){
+            finCombinacion = r;
+          }
+        }else {
+          if (numIguales>1) {
+            finCombinacion = r;
+          }else {
+            inicioCombiacion = null;
+            numIguales = 0;
+          }
+        }
+        if (numIguales>1 && finCombinacion>0){
+          finCombinacion += 1;
+          for (var x=inicioCombiacion; x<finCombinacion; x++){
+            arregloColumnas[c][x].className += " combo";
+          }
+          numIguales =0;
+          inicioCombiacion = null;
+          finCombinacion= null;
+        }
+      }
+    }
+  //buscar combos en filas
+    for (var r=0; r<7; r++){
+      var curElemento = null;
+      var sigElemento = null;
+      var inicioCombiacion = null;
+      var finCombinacion= null;
+      var numIguales= 0;
+      for (var c=0; c<6; c++){
+        curElemento = arregloColumnas[c][r].src;
+        sigElemento = arregloColumnas[c+1][r].src;
+        if (curElemento==sigElemento){
+          if (inicioCombiacion==null){
+            inicioCombiacion=c;
+            numIguales += 1;
+          }else {
+            numIguales += 1;
+          }
+          if (c>4 && numIguales>1){
+            finCombinacion = c;
+          }
+        }else {
+          if (numIguales>1) {
+            finCombinacion = c;
+          }else {
+            inicioCombiacion = null;
+            numIguales = 0;
+          }
+        }
+        if (numIguales>1 && finCombinacion>0){
+          finCombinacion += 1;
+          for (var x=inicioCombiacion; x<finCombinacion; x++){
+            arregloColumnas[x][r].className += " combo";
+          }
+          MostrarPuntos(numIguales);
+          numIguales =0;
+          inicioCombiacion = null;
+          finCombinacion= null;
+        }
+      }
+    }
+  animacionCombos();
 }
 
+//Mostrar puntos
+function MostrarPuntos(numIguales) {
+	var puntos = Number($('#score-text').text());
+	switch (numIguales) {
+		case 2:
+			puntos += 20;
+			break;
+		case 3:
+			puntos += 40;
+			break;
+		case 4:
+			puntos += 80;
+			break;
+		case 5:
+			puntos += 160;
+			break;
+		case 6:
+			puntos += 320;
+	}
+	$('#score-text').text(puntos);
+}
+
+//animacion elementos combos
+function animacionCombos(){
+  $('img.combo').effect('pulsate', 900);
+  $('img.combo').animate(
+    {
+    opacity: '0'  },
+    {
+    duration: 1000,
+    complete: function () {
+      eliminaCombos();
+    },
+    queue: true
+  });
+}
+
+//eliminar elementos combos
+function eliminaCombos(){
+  $('img.combo').remove();
+  iniciartablero();
+}
 
 //Boton iniciar
 $('.btn-reinicio').click(function(){
+  var puntos = 0;
+  var movimientos=0;
   var texto_btn = $(this).text();
   if (texto_btn == "Iniciar"){
     $(this).text("Reiniciar");
     iniciartablero();
-  //  contador();
+    contador();
   }else {
     $(this).text("Iniciar");
     reiniciar();
@@ -81,6 +227,10 @@ function reiniciar(){
   var columnas = $('[class^="col-"]');
   columnas.each(function(){
     $(this).empty();
+    $('#score-text').text("0");
+    $('#movimientos-text').text("0");
+    clearInterval(x);
+    $("#timer").text("00:00");
   })
 }
 
@@ -91,9 +241,5 @@ function comenzarjuego(){
 
 $(function(){
   comenzarjuego();
-  //funciones mouse`
-   $('img.elemento').click(function(){
-     var posV = $("img.elemento").attr("src");
-      $('.btn-reinicio').text(posV);
-   })
+
 })
