@@ -100,7 +100,7 @@ function verificar(){
             numIguales += 1;
           }
           if (r>4 && numIguales>1){
-            finCombinacion = r;
+            finCombinacion = r+1;
           }
         }else {
           if (numIguales>1) {
@@ -139,7 +139,7 @@ function verificar(){
             numIguales += 1;
           }
           if (c>4 && numIguales>1){
-            finCombinacion = c;
+            finCombinacion = c+1;
           }
         }else {
           if (numIguales>1) {
@@ -215,7 +215,7 @@ $('.btn-reinicio').click(function(){
   if (texto_btn == "Iniciar"){
     $(this).text("Reiniciar");
     iniciartablero();
-    contador();
+    contador(2);
   }else {
     $(this).text("Iniciar");
     reiniciar();
@@ -224,14 +224,30 @@ $('.btn-reinicio').click(function(){
 
 //funcion Reiniciar
 function reiniciar(){
+  /*
   var columnas = $('[class^="col-"]');
   columnas.each(function(){
     $(this).empty();
     $('#score-text').text("0");
     $('#movimientos-text').text("0");
-    clearInterval(x);
     $("#timer").text("00:00");
-  })
+    clearInterval(x);
+    contador(2);
+  })*/
+  location.reload();
+}
+
+//
+function finjuego(){
+$(".panel-score").animate(
+  {
+    width: "+=100%"
+  },5000
+)
+$(".score").before("<h2 class=fin>Juego Finalizado</h2>");
+$(".fin").css({"font-size":"5em","color":"#DCFF0E","text-align":"center"});
+$(".panel-tablero").hide('120000','linear');
+$(".time").hide('120000','linear');
 }
 
 //funcion al iniciar partida
